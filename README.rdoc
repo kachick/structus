@@ -1,0 +1,65 @@
+= Structus
+
+* http://github.com/kachick/structus
+
+== Description
+
+Struct++
+
+== Features
+
+* Base APIs look like Struct.
+* Easy and Flexible Validations
+* Hook just before running setters
+* Default value
+* Member aliasing
+* Inheritable
+* AUto Nested Define
+* Pure Ruby :)
+
+* Note:
+
+This library is a rewrited version of "striuct".
+https://github.com/kachick/striuct
+  latest: Structus
+  stable: Striuct
+
+== Usage
+
+* setup
+    require 'structus'
+
+=== Example
+
+    class User < Person
+      member :id, AND(Integer, 1..99999)
+    end
+    
+    user = User.new
+    user.members      #=> [:name, :id]
+    user.name = :Ken  #=> error
+    user.name = ''    #=> error
+    user.name = 'Ken' #=> pass
+
+=== More Example
+
+see test/*
+
+== Requirements
+
+* Ruby 1.9.2 or later
+  
+  tested release versions
+
+  * 1.9.3-p125
+  * 1.9.2-p290
+
+== Installation
+
+* gem install structus
+
+== License
+
+Copyright (C) 2011-2012  Kenichi Kamiya
+
+The MIT/X11 License (See the file LICENSE.)

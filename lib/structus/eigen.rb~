@@ -1,0 +1,62 @@
+require_relative 'class/class'
+require_relative 'instance/instance'
+
+class Structura; class << self
+  # @group Constructor
+  
+  alias_method :new_instance, :new
+  private :new_instance
+  
+  # @param [Symbol, String] *names
+  # @return [Class] - with Subclass, Subclass:Eigen
+  def new(*names, &block)
+    ::Class.new(self) {
+      names.each do |name|
+        member name
+      end
+
+      class_eval(&block) if block_given?
+    }
+  end
+
+  # @yieldreturn [Class] (see Structura.new) - reject floating class
+  # @return [void]
+  def define(&block)
+    raise ArgumentError, 'must with block' unless block_given?
+
+    new(&block).tap {|subclass|
+      subclass.instance_eval do
+        raise 'not yet finished' if members.empty?
+        close
+      end
+    }
+  end
+
+  # @groupend
+
+  private
+  
+  alias_method :original_inherited, :inherited 
+
+  def inherited(subclass)
+    eigen = self
+
+    subclass.class_eval do
+      original_inherited subclass
+
+      if eigen.equal? ::Structura
+        extend  ::Structura::Class
+        include ::Structura::Instance
+      end
+    end
+      
+    subclass.class_eval do
+      const_set :MEMBER_DEFINES, {}
+      
+      def initialize_copy(org)
+        const_set :MEMBER_DEFINES, org::MEMBER_DEFINES.dup
+      end
+    end
+  end
+
+end; end

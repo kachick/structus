@@ -1,0 +1,19 @@
+# Copyright (C) 2011-2012  Kenichi Kamiya
+# Provides a Struct++ class.
+# This library is a rewrited version of "striuct".
+#   latest: Structura
+#   stable: Striuct
+
+require 'validation'
+
+# @abstract
+class Structura
+  include Validation
+
+  # namespace for .to_struct_class, #to_struct
+  module Structs
+  end
+end
+
+require_relative 'structura/version'
+require_relative 'structura/eigen'
