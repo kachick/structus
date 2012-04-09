@@ -1,8 +1,0 @@
-$VERBOSE = true
-
-require '../lib/structura'
-
-A = Structura.new
-
-p A
-p A.members
