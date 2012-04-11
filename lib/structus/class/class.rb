@@ -5,17 +5,6 @@ module Structus::Class
   extend Forwardable
   
   class << self
-    def def_wrappers(recepter, *methods)
-      methods.each do |method|
-        def_delegator recepter, method,  :"_#{method}"
-      
-        define_method method do |*args, &block|
-          __send__ :"_#{method}", *args, &block
-          self
-        end
-      end
-    end
-
     def def_wrapped_enums(recepter, *methods)
       methods.each do |method|
         def_delegator recepter, method, :"_#{method}"
@@ -169,6 +158,16 @@ module Structus::Class
     end
   end
 
+  # @param [Symbol, String, #to_str] name
+  def autonym(name)
+    name = name.to_sym
+    if _attrs.has_key? name
+      (linked = _attrs[name]).kind_of?(Symbol) ? linked : name
+    else
+      raise NameError
+    end
+  end
+
   private
 
   def close
@@ -177,20 +176,7 @@ module Structus::Class
   end
 
   def _attrs(name=nil)
-    if name
-      if self::MEMBER_DEFINES.has_key? name
-        attrs = self::MEMBER_DEFINES[name] #=> aliased_name or attributes
-        if attrs.kind_of? Symbol
-          self::MEMBER_DEFINES[attrs]
-        else
-          attrs
-        end
-      else
-        raise
-      end
-    else
-      self::MEMBER_DEFINES
-    end
+    name ? self::MEMBER_DEFINES[autonym name] : self::MEMBER_DEFINES
   end
 
   def _define_nested_member(name, &block)

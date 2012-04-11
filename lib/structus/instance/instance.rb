@@ -2,17 +2,6 @@ module Structus::Instance
   extend Forwardable
 
   class << self
-    def def_wrappers(recepter, *methods)
-      methods.each do |method|
-        def_delegator recepter, method,  :"_#{method}"
-      
-        define_method method do |*args, &block|
-          __send__ :"_#{method}", *args, &block
-          self
-        end
-      end
-    end
-
     def def_wrapped_enums(recepter, *methods)
       methods.each do |method|
         def_delegator recepter, method, :"_#{method}"
@@ -50,10 +39,6 @@ module Structus::Instance
   def initialize(*values)
     @_db, @_locks = {}, {}
     _replace_values(*values)
-  end
-
-  def initialize_copy(original)
-    @_db, @_locks = @_db.dup, {}
   end
 
   def values
@@ -200,12 +185,11 @@ module Structus::Instance
     restrict?(name) ? _valid?(_attrs(name)[:is], value) : true
   end
 
-  # true if all members passed under any condition
+  # true if all members passed under specific condition
   def strict?
     each_member.all?{|name|valid? name}
   end
   
-  # true if freezed, fixed familar members, all members passed any condition
   def secure?
     (frozen? || locked?) && self.class.closed? && strict?
   end
@@ -234,6 +218,10 @@ module Structus::Instance
   
   private
   
+  def initialize_copy(original)
+    @_db, @_locks = @_db.dup, {}
+  end
+
   def unlock(key=true)
     raise "can't modify frozen #{self.class}" if frozen?
     
@@ -247,7 +235,7 @@ module Structus::Instance
   end
 
   def close
-    [@_db, @_locks].each(&:freeze)
+    [@_db, @_locks].each(&:freeze).freeze
     self
   end
 
