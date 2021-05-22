@@ -1,6 +1,9 @@
 = Structus
 
-* http://github.com/kachick/structus
+* <em><b>This repository is archived</b></em>
+* <em><b>No longer maintained</b></em>
+
+I didn't publish this to rubygems.org
 
 == Description
 
@@ -53,10 +56,6 @@ see test/*
 
   * 1.9.3-p125
   * 1.9.2-p290
-
-== Installation
-
-* gem install structus
 
 == License
 
